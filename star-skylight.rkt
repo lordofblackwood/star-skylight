@@ -30,22 +30,53 @@
 (define current-time (now/utc))
 (define curdate (date->string (current-date)))
 (define local-noon-datetime (string-append curdate " " (solar-noon latitude longitude "today")))
-(define today-local-noon (parse-datetime local-noon-datetime "yyyy-mm-dd h:mm:ss aa"))
+(define today-local-noon (parse-datetime local-noon-datetime "yyyy-MM-dd h:mm:ss aa"))
 (pretty-print current-time)
 (pretty-print today-local-noon)
 
 ;(define sun-init-ra )
 ;(define sun-final-ra )
 
-;(-> Image)
+;(-> Real Real Image)
 ; Returns an image of the stars directly above you.
-#;(define (get-stars-above-me)
-  (let ([declincation (coords-longitude location)]
-        [right-ascention (calc-right-ascention)])
-    (get-nasa-image declintation right-asenction)))
+#;(define (get-stars-above-me lng lat)
+  (let ([declincation lng]
+        [right-ascension (calc-right-ascention lng lat)])
+    (get-nasa-image declintation right-ascension)))
 
-;(-> Real)
+;(-> Real Real Real)
 ; Calculates the right ascention for the space that is above you right now.
-;(define 
+#;(define (calc-right-ascension lng lat)
+    (let* ([now (now/utc)]
+           [yesterday ]
+           [tomorrow ]
+           [solar-noon-pair (get-solar-noon-pair yesterday tomorrow)]
+           [ra-pair (get-ra-pair yesterday tomorrow)]
+           [percentage-between-noons (percent-of-day-completed now solar-noon-pair)]
+           [degrees-to-travel (+ 360 (- (cdr ra-pair) (car ra-pair)))])
+      (+ (car ra-pair) (* percentage-between-noons degrees-to-travel))))
+           
+;;Potentially could combine the bottom to into a sun-info struct and reduce api calls
+;;repetitive code.
 
+;(-> String String (Pair String String))
+; Gets the solar noon that most recently occurred and the solar noon that is going to occur next.
+(define (get-solar-noon-pair now yesterday tomorrow lng lat)
+  (if (past-todays-local-noon? now)
+    (cons (solar-noon lng lat "today") (solar-noon lng lat tomorrow))
+    (cons (solar-noon lng lat yesterday) (solar-noon lng lat "today"))))
+
+;(-> String String (Pair String String))
+; Gets the right-ascension of the sun for the solar noon that
+; most recently occurred and the solar noon that is going to occur next.
+#;(define (get-ra-pair now yesterday tomorrow)
+  (if (past-todays-local-noon? now lng lat)
+    (cons (get-sun-ra lng lat "today") (get-sun-ra lng lat tomorrow))
+    (cons (get-sun-ra lng lat yesterday) (get-sun-ra lng lat "today"))))
+
+;(-> Datetime Boolean)
+; Determines if we past the local noon for today.
+(define (past-todays-local-noon? now lng lat)
+  (let ([solar-noon-today (parse-datetime (string-append curdate " " (solar-noon lng lat "today")) "yyyy-MM-dd h:mm:ss aa")])
+    (datetime<? solar-noon-today now)))
 
