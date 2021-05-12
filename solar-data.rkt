@@ -28,7 +28,7 @@
 
 ;; a date-string is a String in the date format "yyyy-mm-dd"
 
-;; (date-string -> String)
+;; (date-string -> Number)
 ;; Calculations for sun's right ascension
 (define (get-sun-ra lng lat string-date)
   (let* ([date-split          (map string->number (string-split string-date "-"))]

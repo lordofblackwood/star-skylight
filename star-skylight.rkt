@@ -8,6 +8,7 @@
                     date?
                     date)
          racket/list
+         racket/flonum
          racket/pretty)
 
 
@@ -53,7 +54,7 @@
            [solar-noon-pair           (get-solar-noon-pair now yesterday today tomorrow latitude longitude)]
            [ra-pair                   (get-ra-pair now yesterday today tomorrow latitude longitude )]
            [percentage-between-noons  (percent-of-day-completed now solar-noon-pair)]
-           [degrees-to-travel         (+ 360 (- (cdr ra-pair) (car ra-pair)))])
+           [degrees-to-travel         (+ 360 (- (second ra-pair) (first ra-pair)))])
       (+ (car ra-pair) (* percentage-between-noons degrees-to-travel))))
            
 ;;Potentially could combine the bottom to into a sun-info struct and reduce api calls
@@ -93,7 +94,7 @@
         [solar-day      (minutes-between (as-datetime (first solar-noon-pair))
                                          (as-datetime (second solar-noon-pair)))]
         [day-completed  (minutes-between (as-datetime (first solar-noon-pair)) now)])
-    (/ day-completed solar-day)))
+    (/ (->fl day-completed) solar-day)))
 
 (define f (new frame% [label "Stars Above me Right Now"]))
 (send f show #t)
