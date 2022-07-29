@@ -15,14 +15,12 @@
   (let* ([base-url    "https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?"]
          [position    (string-append "position=" ra "," dec)]
          [survey      "survey=digitized+sky+survey"]
+         [scaling     "scaling=linear"]
          [return      "return=png"]
-         [nasa-url    (string-append base-url position "&" survey "&" return)]
+         [nasa-url    (string-append base-url position "&" survey "&" scaling "&" return)]
          [nasa-image  (get-pure-port (string->url nasa-url))])
     (display nasa-url)
     (display "\n")
-    ;(display-pure-port nasa-image)
-    ;(display "\n")
-    ;(png? (port->bytes nasa-image))))
     (read-bitmap nasa-image)))
 
 
