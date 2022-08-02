@@ -37,9 +37,10 @@
 
 ;(-> Real Real Datetime Datetime Bitmap)
 ; Returns an image of the stars directly above you.
-(define (get-stars-above-me lng lat now today)
+(define (get-stars-above-me lng lat)
   (let ([declination (number->string lat)]
-        [right-ascension (number->string (calc-right-ascension lng lat now today))])
+        ;; RA for UTC will be calculated and we will adjust by our longitude
+        [right-ascension (number->string (+ lng (calc-right-ascension 0 0 (now/utc) (today/utc))))])
     (get-nasa-image declination right-ascension)))
 
 ;(-> Real Real Dateime Datetime Datetime Real)
@@ -101,6 +102,4 @@
   (void (new message%
              [parent f]
              [label (get-stars-above-me (coords-longitude LOCATION)
-                                        (coords-latitude LOCATION)
-                                        (now/utc)
-                                        (today/utc))])))
+                                        (coords-latitude LOCATION))])))
