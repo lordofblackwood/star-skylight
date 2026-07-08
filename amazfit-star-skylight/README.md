@@ -42,6 +42,14 @@ Preview on the watch:
 npm run preview
 ```
 
+Build a production package for Amazfit Band 7:
+
+```sh
+npm run build:band7
+```
+
+The production artifact is written to `dist/*.zab`. That `.zab` is the package to upload in the Zepp developer console for the app tied to this `appId`, then submit through Zepp's review/release flow. This repo can produce the package, but publishing/installing it as a normal app must happen from the Zepp account that owns the app.
+
 The current `app.json` uses API level `1.0` and includes Amazfit Band 7 device sources `252`, `253`, and `254`. Band 7 is listed by Zepp as Zepp OS `1.0`, screen shape `Band`, and resolution `194 x 368`.
 
 Band 7 does not expose the newer watch-side GPS API to Mini Programs. After installing the preview, open the app settings in the Zepp phone app and tap `Use Phone Location`. If the Zepp settings WebView allows phone geolocation, it saves decimal coordinates automatically. If it is blocked, enter coordinates manually, such as `40.7128` and `-74.0060`, then tap `Refresh` on the band.

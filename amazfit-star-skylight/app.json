@@ -5,8 +5,8 @@
     "appName": "Star Skylight",
     "appType": "app",
     "version": {
-      "code": 17,
-      "name": "0.4.0"
+      "code": 18,
+      "name": "0.4.1"
     },
     "icon": "icon.png",
     "vender": "star-skylight",
@@ -62,5 +62,5 @@
     }
   },
   "defaultLanguage": "en-US",
-  "debug": true
+  "debug": false
 }

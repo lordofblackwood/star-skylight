@@ -1,13 +1,14 @@
 {
   "name": "amazfit-star-skylight",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Zepp OS Mini Program for drawing VizieR catalog stars above the watch.",
   "type": "module",
   "main": "app.js",
   "scripts": {
     "test": "node tests/skyview.test.mjs",
     "preview": "zeus preview",
-    "build": "zeus build"
+    "build": "zeus build",
+    "build:band7": "zeus build -t \"Amazfit Band 7\""
   },
   "dependencies": {
     "@zeppos/zml": "^0.0.9"
