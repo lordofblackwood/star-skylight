@@ -1,0 +1,66 @@
+{
+  "configVersion": "v3",
+  "app": {
+    "appId": 1003873,
+    "appName": "Star Skylight",
+    "appType": "app",
+    "version": {
+      "code": 17,
+      "name": "0.4.0"
+    },
+    "icon": "icon.png",
+    "vender": "star-skylight",
+    "description": "Draws VizieR catalog stars above you on Band 7."
+  },
+  "runtime": {
+    "apiVersion": {
+      "compatible": "1.0",
+      "target": "1.0",
+      "minVersion": "1.0"
+    },
+    "type": 0
+  },
+  "permissions": [],
+  "targets": {
+    "band": {
+      "module": {
+        "page": {
+          "pages": [
+            "pages/index"
+          ]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
+        }
+      },
+      "platforms": [
+        {
+          "name": "amazfit-band-7",
+          "st": "b",
+          "deviceSource": 252
+        },
+        {
+          "name": "amazfit-band-7",
+          "st": "b",
+          "deviceSource": 253
+        },
+        {
+          "name": "amazfit-band-7",
+          "st": "b",
+          "deviceSource": 254
+        }
+      ],
+      "designWidth": 194
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "Star Skylight"
+    }
+  },
+  "defaultLanguage": "en-US",
+  "debug": true
+}
