@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key>
+  <string>local.star-skylight.current-location</string>
+  <key>CFBundleExecutable</key>
+  <string>current-location</string>
+  <key>CFBundleName</key>
+  <string>Star Skylight Current Location</string>
+  <key>CFBundleDisplayName</key>
+  <string>Star Skylight Location</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0</string>
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>Star Skylight uses your Mac's current location when a photo does not include GPS metadata.</string>
+</dict>
+</plist>

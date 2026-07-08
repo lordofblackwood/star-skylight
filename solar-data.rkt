@@ -7,8 +7,7 @@
          racket/date
          racket/string
          racket/match
-         gregor
-         "geo-locate-api.rkt") 
+         gregor)
 
 (provide solar-noon
          get-sun-ra)

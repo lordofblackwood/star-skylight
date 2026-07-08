@@ -1,7 +1,7 @@
 #lang racket/base
-(require "geo-locate-api.rkt"
-         "solar-data.rkt"
+(require "solar-data.rkt"
          "nasa-api.rkt"
+         "photo-metadata.rkt"
          gregor
          racket/date
          (except-in racket/gui
@@ -9,7 +9,13 @@
                     date)
          racket/list
          racket/flonum
-         racket/pretty)
+         racket/pretty
+         racket/match)
+
+(provide get-stars-above-me
+         get-stars-above-me-at
+         get-stars-above-me-url-at
+         calc-right-ascension)
 
 
 ;; API requires right ascension and declination
@@ -38,10 +44,23 @@
 ;(-> Real Real Datetime Datetime Bitmap)
 ; Returns an image of the stars directly above you.
 (define (get-stars-above-me lng lat)
+  (get-stars-above-me-at lng lat (now/utc)))
+
+;(-> Real Real Datetime Bitmap)
+; Returns an image of the stars directly above a location at a specific time.
+(define (get-stars-above-me-at lng lat when)
   (let ([declination (number->string lat)]
         ;; RA for UTC will be calculated and we will adjust by our longitude
-        [right-ascension (number->string (+ lng (calc-right-ascension 0 0 (now/utc) (today/utc))))])
-    (get-nasa-image declination right-ascension)))
+        [right-ascension (number->string (+ lng (calc-right-ascension lng lat when (->date when))))])
+    (get-nasa-image right-ascension declination)))
+
+;(-> Real Real Datetime String)
+; Returns the NASA SkyView image URL for the stars directly above a location at a specific time.
+(define (get-stars-above-me-url-at lng lat when)
+  (let ([declination (number->string lat)]
+        ;; RA for UTC will be calculated and we will adjust by our longitude
+        [right-ascension (number->string (+ lng (calc-right-ascension lng lat when (->date when))))])
+    (get-nasa-image-url right-ascension declination)))
 
 ;(-> Real Real Dateime Datetime Datetime Real)
 ; Calculates the right ascention for the space that is above you right now.
@@ -95,11 +114,68 @@
         [day-completed  (minutes-between (as-datetime (first solar-noon-pair)) now)])
     (/ (->fl day-completed) solar-day)))
 
+(define (save-stars-image bitmap path)
+  (unless (send bitmap save-file (path->string path) 'png)
+    (error 'save-stars-image "could not save PNG to ~a" path)))
+
+(define (prompt-and-save-stars-image parent bitmap)
+  (define path
+    (put-file "Save stars image"
+              parent
+              #f
+              "stars-above-me.png"
+              "png"
+              null
+              '(("PNG image" "*.png")
+                ("All files" "*.*"))))
+  (when path
+    (save-stars-image bitmap path)
+    (message-box "Saved"
+                 (format "Saved stars image to ~a" path)
+                 parent)))
+
+(define (parse-command-line args)
+  (match (vector->list args)
+    ['()
+     (values #f #f)]
+    [(list "--save" output-path)
+     (values #f (string->path output-path))]
+    [(list photo-path)
+     (values (string->path photo-path) #f)]
+    [(list photo-path "--save" output-path)
+     (values (string->path photo-path) (string->path output-path))]
+    [_
+     (error 'star-skylight
+            "usage: racket star-skylight.rkt [photo-path] [--save output.png]")]))
+
 (module+ main 
+  (define-values (photo-path save-path)
+    (parse-command-line (current-command-line-arguments)))
   (define f (new frame% [label "Stars Above me Right Now"]))
-  (define LOCATION (get-current-location))
-  (send f show #t)
+  (define OBSERVATION
+    (if photo-path
+        (get-observation-from-photo/fallback photo-path)
+        (get-current-mac-observation)))
+  (define STARS-IMAGE
+    (get-stars-above-me-at
+     (observation-longitude OBSERVATION)
+     (observation-latitude OBSERVATION)
+     (observation-datetime OBSERVATION)))
+  (when save-path
+    (save-stars-image STARS-IMAGE save-path)
+    (displayln (format "Saved stars image to ~a" save-path)))
+  (define panel
+    (new vertical-panel%
+         [parent f]
+         [alignment '(center center)]))
   (void (new message%
-             [parent f]
-             [label (get-stars-above-me (coords-longitude LOCATION)
-                                        (coords-latitude LOCATION))])))
+             [parent panel]
+             [label STARS-IMAGE]))
+  (void (new button%
+             [parent panel]
+             [label "Save PNG..."]
+             [callback
+              (lambda (_button _event)
+                (prompt-and-save-stars-image f STARS-IMAGE))]))
+  (send f show #t)
+  (void))
